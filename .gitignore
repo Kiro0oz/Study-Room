@@ -1,0 +1,48 @@
+# Python Bytecode
+*.pyc
+*.pyo
+__pycache__/
+
+# Environment Variables
+.env
+
+# Virtual Environment
+venv/
+env/
+.virtualenv/
+
+# Django Migrations
+*/migrations/*
+
+# Database Files
+*.sqlite3
+
+# Media and Uploaded Files
+media/
+staticfiles/
+
+# IDE and Editor Files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# Node Modules (if using npm/yarn for frontend)
+node_modules/
+
+# Coverage Reports
+htmlcov/
+.coverage
+*.cover
+*.py,cover
+
+# pytest Cache
+.pytest_cache/
+
+# Build Files
+build/
+dist/
+*.egg-info/
