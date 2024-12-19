@@ -18,6 +18,7 @@ from .forms import RoomForm
 # ]
 
 
+# =============== Authentication =============== #
 def loginPage(request):
     page = 'login'
 
@@ -65,6 +66,18 @@ def registerPage(request):
     return render(request, 'base/login_register.html',context)
 
 
+# =============== User Profile =============== #
+def userProfile(request, pk):
+    user = User.objects.get(id=pk)
+    rooms = user.room_set.all()
+    room_messages = user.message_set.all()
+    topics = Topic.objects.all()
+    context = {'user': user, 'rooms': rooms, 'room_messages': room_messages, 'topics': topics}
+    return render(request, 'base/profile.html', context)
+
+
+
+# =============== Home Page  =============== #
 def home(request):
     q = request.GET.get('q') if request.GET.get('q') != None else ''
     # Match query e.g ( q=dj => django)
@@ -76,14 +89,17 @@ def home(request):
 
     topics = Topic.objects.all()
     rooms_count = rooms.count()
+    room_messages = Message.objects.filter(Q(room__name__icontains=q))
 
-    context = {'rooms': rooms, 'topics': topics, 'room_count': rooms_count}
+    context = {'rooms': rooms, 'topics': topics, 'room_count': rooms_count, 'room_messages': room_messages}
     return render(request, 'base/home.html', context)
 
+
+# =============== Rooms CRUD =============== #
 def room(request, pk):
     room = Room.objects.get(pk=pk)
     participants = room.participants.all()
-    room_messages = room.message_set.all().order_by('-created')
+    room_messages = room.message_set.all()
     if request.method == 'POST':
         new_message = request.POST.get('body')
         Message.objects.create(room=room, user=request.user, body=new_message)
@@ -100,7 +116,9 @@ def createRoom(request):
     if request.method == 'POST':
         form = RoomForm(request.POST)
         if form.is_valid():
-            form.save()
+            room = form.save(commit=False)
+            room.host = request.user
+            room.save()
             return redirect('home')
 
     context = {'form' : form}
@@ -138,6 +156,8 @@ def deleteRoom(request, pk):
     context = {'room': room}
     return render(request, 'base/delete.html', context)
 
+
+# =============== Messages delete =============== #
 @login_required(login_url='login')
 def deleteMessage(request, pk):
     message = Message.objects.get(id=pk)
@@ -151,3 +171,5 @@ def deleteMessage(request, pk):
         return redirect('home')
     context = {'obj': message}
     return render(request, 'base/delete.html', context)
+
+
