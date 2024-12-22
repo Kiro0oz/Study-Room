@@ -1,5 +1,5 @@
 {% extends "main.html" %}
-
+{% load static %}
 
 {% block content %}
   <main class="profile-page layout layout--3">
@@ -13,7 +13,7 @@
         <div class="profile">
           <div class="profile__avatar">
             <div class="avatar avatar--large active">
-              <img src="https://randomuser.me/api/portraits/men/13.jpg" />
+              <img src="{% static 'images/avatar.svg' %}" />
             </div>
           </div>
           <div class="profile__info">
